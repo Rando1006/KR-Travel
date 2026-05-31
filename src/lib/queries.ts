@@ -70,6 +70,34 @@ export async function getSpots(tripId: number): Promise<Spot[]> {
   return rows as Spot[];
 }
 
+export interface Expense {
+  id: number;
+  category: string;
+  amount_krw: number;
+  note: string | null;
+  spent_on: string | null;
+}
+
+export async function getExpenses(): Promise<Expense[]> {
+  await ensureSchema();
+  const sql = getSql();
+  const rows = await sql`
+    select id, category, amount_krw, note, to_char(spent_on, 'YYYY-MM-DD') as spent_on
+    from expenses
+    order by spent_on desc nulls last, id desc
+  `;
+  return rows as Expense[];
+}
+
+/** 取得「1 元台幣 = 幾韓元」匯率，未設定時預設 42。 */
+export async function getKrwPerTwd(): Promise<number> {
+  await ensureSchema();
+  const sql = getSql();
+  const rows = await sql`select value from app_settings where key = 'krw_per_twd'`;
+  const n = rows[0]?.value ? Number(rows[0].value) : NaN;
+  return Number.isFinite(n) && n > 0 ? n : 42;
+}
+
 export async function getChecklist(tripId: number | null): Promise<ChecklistItem[]> {
   await ensureSchema();
   const sql = getSql();

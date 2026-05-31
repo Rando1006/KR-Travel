@@ -56,6 +56,20 @@ export function ensureSchema(): Promise<void> {
       // 子項目支援：parent_id 指向同表的母項目（母項目刪除時連帶刪除子項目）
       await sql`alter table checklist_items
         add column if not exists parent_id integer references checklist_items(id) on delete cascade`;
+      // 記帳：支出記錄（獨立，不綁定行程）
+      await sql`create table if not exists expenses (
+        id serial primary key,
+        category text not null default '其他',
+        amount_krw integer not null default 0,
+        note text,
+        spent_on date,
+        created_at timestamptz not null default now()
+      )`;
+      // 通用設定（key/value），目前用來存韓元對台幣匯率
+      await sql`create table if not exists app_settings (
+        key text primary key,
+        value text not null
+      )`;
     })().catch((err) => {
       // 失敗時清掉 promise，下一次請求可重試
       schemaPromise = null;

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { PWARegister } from "./components/PWARegister";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -36,12 +37,19 @@ export default function RootLayout({
             >
               行前準備
             </Link>
+            <Link
+              href="/budget"
+              className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
+            >
+              記帳
+            </Link>
           </nav>
         </header>
         <main className="mx-auto max-w-3xl px-4 py-6">{children}</main>
         <footer className="mx-auto max-w-3xl px-4 py-8 text-center text-xs text-slate-400">
           祝旅途愉快 · 즐거운 여행 되세요
         </footer>
+        <PWARegister />
       </body>
     </html>
   );
