@@ -53,6 +53,9 @@ export function ensureSchema(): Promise<void> {
         sort_order integer not null default 0,
         created_at timestamptz not null default now()
       )`;
+      // 子項目支援：parent_id 指向同表的母項目（母項目刪除時連帶刪除子項目）
+      await sql`alter table checklist_items
+        add column if not exists parent_id integer references checklist_items(id) on delete cascade`;
     })().catch((err) => {
       // 失敗時清掉 promise，下一次請求可重試
       schemaPromise = null;

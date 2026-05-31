@@ -42,9 +42,11 @@ export async function addChecklistItem(formData: FormData) {
   const text = str(formData, "text");
   if (!text) return;
   const category = str(formData, "category") || "其他";
+  const parentRaw = str(formData, "parent_id");
+  const parentId = parentRaw ? Number(parentRaw) : null;
   await sql`
-    insert into checklist_items (trip_id, category, text)
-    values (${tripId}, ${category}, ${text})
+    insert into checklist_items (trip_id, category, text, parent_id)
+    values (${tripId}, ${category}, ${text}, ${parentId})
   `;
   revalidatePath("/prepare");
 }

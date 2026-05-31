@@ -24,6 +24,7 @@ export interface Spot {
 export interface ChecklistItem {
   id: number;
   trip_id: number | null;
+  parent_id: number | null;
   category: string;
   text: string;
   checked: boolean;
@@ -74,13 +75,13 @@ export async function getChecklist(tripId: number | null): Promise<ChecklistItem
   const sql = getSql();
   const rows = tripId === null
     ? await sql`
-        select id, trip_id, category, text, checked, sort_order
+        select id, trip_id, parent_id, category, text, checked, sort_order
         from checklist_items
         where trip_id is null
         order by category asc, sort_order asc, id asc
       `
     : await sql`
-        select id, trip_id, category, text, checked, sort_order
+        select id, trip_id, parent_id, category, text, checked, sort_order
         from checklist_items
         where trip_id = ${tripId}
         order by category asc, sort_order asc, id asc
