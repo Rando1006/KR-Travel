@@ -2,8 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTrip, getSpots, type Spot } from "@/lib/queries";
 import { spotNaverUrl, isLink } from "@/lib/naver";
-import { formatDateRange } from "@/lib/date";
+import { formatDateRange, dateForDay } from "@/lib/date";
 import { ConfirmSubmit } from "../../components/ConfirmSubmit";
+import { Linkify } from "../../components/Linkify";
 import { updateTrip, addSpot, updateSpot, deleteSpot } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -54,7 +55,7 @@ export default async function TripPage({
         <p className="mt-1 text-sm text-slate-500">
           {formatDateRange(trip.start_date, trip.end_date)}
         </p>
-        {trip.notes && <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600">{trip.notes}</p>}
+        {trip.notes && <Linkify text={trip.notes} className="mt-2 whitespace-pre-wrap text-sm text-slate-600" />}
 
         <details className="mt-3">
           <summary className="text-sm text-slate-400 hover:text-brand-600">編輯行程資訊</summary>
@@ -105,6 +106,9 @@ export default async function TripPage({
                 {day}
               </span>
               第 {day} 天
+              {dateForDay(trip.start_date, day) && (
+                <span className="text-sm font-normal text-slate-400">{dateForDay(trip.start_date, day)}</span>
+              )}
             </h2>
 
             {list.length === 0 ? (
@@ -140,7 +144,7 @@ export default async function TripPage({
                           <p className="mt-0.5 text-xs text-emerald-600">🔗 已設定 Naver 地圖連結</p>
                         )}
                         {spot.memo && (
-                          <p className="mt-1 whitespace-pre-wrap text-sm text-slate-600">{spot.memo}</p>
+                          <Linkify text={spot.memo} className="mt-1 whitespace-pre-wrap text-sm text-slate-600" />
                         )}
                         <a
                           href={spotNaverUrl(spot)}
