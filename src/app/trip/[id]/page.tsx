@@ -46,20 +46,19 @@ export default async function TripPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/" className="text-sm text-slate-500 hover:text-brand-600">
-        ← 回到行程列表
-      </Link>
+      <div>
+        <Link href="/" className="text-sm text-slate-500 hover:text-brand-600">
+          ← 回到行程列表
+        </Link>
+        <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h1 className="text-xl font-bold text-slate-800">{trip.title}</h1>
+          <span className="text-sm text-slate-500">{formatDateRange(trip.start_date, trip.end_date)}</span>
+        </div>
+        {trip.notes && <Linkify text={trip.notes} className="mt-1 whitespace-pre-wrap text-sm text-slate-600" />}
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h1 className="text-2xl font-bold">{trip.title}</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          {formatDateRange(trip.start_date, trip.end_date)}
-        </p>
-        {trip.notes && <Linkify text={trip.notes} className="mt-2 whitespace-pre-wrap text-sm text-slate-600" />}
-
-        <details className="mt-3">
-          <summary className="text-sm text-slate-400 hover:text-brand-600">編輯行程資訊</summary>
-          <form action={updateTrip} className="mt-3 space-y-3 border-t border-slate-100 pt-3">
+        <details className="mt-1">
+          <summary className="text-xs text-slate-400 hover:text-brand-600">編輯行程資訊</summary>
+          <form action={updateTrip} className="mt-2 space-y-3 rounded-xl border border-slate-200 bg-white p-4">
             <input type="hidden" name="id" value={trip.id} />
             <input
               name="title"
