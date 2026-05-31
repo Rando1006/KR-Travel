@@ -97,10 +97,28 @@ export default async function TripPage({
         </details>
       </div>
 
+      {/* 天數快速跳轉列（固定在上方，點選即跳到該天） */}
+      {days.length > 1 && (
+        <nav className="sticky top-[56px] z-[5] -mx-4 flex gap-2 overflow-x-auto border-y border-slate-200 bg-white/90 px-4 py-2 backdrop-blur">
+          {days.map((day) => (
+            <a
+              key={day}
+              href={`#day-${day}`}
+              className="flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 hover:border-brand-400 hover:text-brand-600"
+            >
+              <span className="font-bold">第{day}天</span>
+              {dateForDay(trip.start_date, day) && (
+                <span className="text-xs text-slate-400">{dateForDay(trip.start_date, day)}</span>
+              )}
+            </a>
+          ))}
+        </nav>
+      )}
+
       {days.map((day) => {
         const list = spotsByDay.get(day) ?? [];
         return (
-          <section key={day} className="space-y-3">
+          <section key={day} id={`day-${day}`} className="scroll-mt-28 space-y-3">
             <h2 className="flex items-center gap-2 text-lg font-bold text-slate-700">
               <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 text-sm font-bold text-white">
                 {day}
