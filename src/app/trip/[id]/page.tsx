@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTrip, getSpots, type Spot } from "@/lib/queries";
-import { spotNaverUrl } from "@/lib/naver";
+import { spotNaverUrl, isLink } from "@/lib/naver";
+import { formatDateRange } from "@/lib/date";
 import { updateTrip, addSpot, deleteSpot } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -50,9 +51,7 @@ export default async function TripPage({
       <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <h1 className="text-2xl font-bold">{trip.title}</h1>
         <p className="mt-1 text-sm text-slate-500">
-          {trip.start_date && trip.end_date
-            ? `${trip.start_date} ~ ${trip.end_date}`
-            : trip.start_date || trip.end_date || "尚未設定日期"}
+          {formatDateRange(trip.start_date, trip.end_date)}
         </p>
         {trip.notes && <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600">{trip.notes}</p>}
 
@@ -133,8 +132,11 @@ export default async function TripPage({
                         {spot.name_kr && (
                           <p className="mt-0.5 text-sm text-slate-500">{spot.name_kr}</p>
                         )}
-                        {spot.address && (
+                        {spot.address && !isLink(spot.address) && (
                           <p className="mt-0.5 text-xs text-slate-400">📍 {spot.address}</p>
+                        )}
+                        {isLink(spot.address) && (
+                          <p className="mt-0.5 text-xs text-emerald-600">🔗 已設定 Naver 地圖連結</p>
                         )}
                         {spot.memo && (
                           <p className="mt-1 whitespace-pre-wrap text-sm text-slate-600">{spot.memo}</p>
@@ -215,12 +217,13 @@ export default async function TripPage({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-600">地址</label>
+            <label className="mb-1 block text-sm font-medium text-slate-600">地址 / Naver 地圖連結</label>
             <input
               name="address"
-              placeholder="選填"
+              placeholder="填地址文字，或直接貼 Naver 連結（如 https://naver.me/xxxx）"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
             />
+            <p className="mt-1 text-xs text-slate-400">貼上 Naver 連結時，導航按鈕會直接開啟該連結（定位最準）</p>
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-600">分類</label>

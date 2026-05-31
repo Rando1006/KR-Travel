@@ -1,14 +1,9 @@
 import Link from "next/link";
 import { getTrips } from "@/lib/queries";
+import { formatDateRange } from "@/lib/date";
 import { createTrip, deleteTrip } from "./actions";
 
 export const dynamic = "force-dynamic";
-
-function formatRange(start: string | null, end: string | null): string {
-  if (!start && !end) return "尚未設定日期";
-  if (start && end) return `${start} ~ ${end}`;
-  return start || end || "";
-}
 
 export default async function Home() {
   const trips = await getTrips();
@@ -85,7 +80,7 @@ export default async function Home() {
             >
               <Link href={`/trip/${trip.id}`} className="min-w-0 flex-1">
                 <p className="truncate text-lg font-semibold text-slate-800">{trip.title}</p>
-                <p className="mt-0.5 text-sm text-slate-500">{formatRange(trip.start_date, trip.end_date)}</p>
+                <p className="mt-0.5 text-sm text-slate-500">{formatDateRange(trip.start_date, trip.end_date)}</p>
                 {trip.notes && (
                   <p className="mt-1 truncate text-xs text-slate-400">{trip.notes}</p>
                 )}

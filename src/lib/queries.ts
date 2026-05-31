@@ -34,7 +34,10 @@ export async function getTrips(): Promise<Trip[]> {
   await ensureSchema();
   const sql = getSql();
   const rows = await sql`
-    select id, title, start_date, end_date, notes
+    select id, title,
+      to_char(start_date, 'YYYY-MM-DD') as start_date,
+      to_char(end_date, 'YYYY-MM-DD') as end_date,
+      notes
     from trips
     order by coalesce(start_date, created_at::date) asc, id asc
   `;
@@ -45,7 +48,11 @@ export async function getTrip(id: number): Promise<Trip | null> {
   await ensureSchema();
   const sql = getSql();
   const rows = await sql`
-    select id, title, start_date, end_date, notes from trips where id = ${id}
+    select id, title,
+      to_char(start_date, 'YYYY-MM-DD') as start_date,
+      to_char(end_date, 'YYYY-MM-DD') as end_date,
+      notes
+    from trips where id = ${id}
   `;
   return (rows[0] as Trip) ?? null;
 }
