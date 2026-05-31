@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTrip, getSpots, type Spot } from "@/lib/queries";
 import { spotNaverUrl, isLink } from "@/lib/naver";
 import { formatDateRange } from "@/lib/date";
+import { ConfirmSubmit } from "../../components/ConfirmSubmit";
 import { updateTrip, addSpot, updateSpot, deleteSpot } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +12,7 @@ const CATEGORIES = ["景點", "美食", "購物", "住宿", "交通", "其他"];
 
 function categoryStyle(category: string | null): string {
   switch (category) {
-    case "景點": return "bg-blue-100 text-blue-700";
+    case "景點": return "bg-brand-100 text-brand-700";
     case "美食": return "bg-orange-100 text-orange-700";
     case "購物": return "bg-pink-100 text-pink-700";
     case "住宿": return "bg-purple-100 text-purple-700";
@@ -44,7 +45,7 @@ export default async function TripPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/" className="text-sm text-slate-500 hover:text-blue-600">
+      <Link href="/" className="text-sm text-slate-500 hover:text-brand-600">
         ← 回到行程列表
       </Link>
 
@@ -56,38 +57,38 @@ export default async function TripPage({
         {trip.notes && <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600">{trip.notes}</p>}
 
         <details className="mt-3">
-          <summary className="text-sm text-slate-400 hover:text-blue-600">編輯行程資訊</summary>
+          <summary className="text-sm text-slate-400 hover:text-brand-600">編輯行程資訊</summary>
           <form action={updateTrip} className="mt-3 space-y-3 border-t border-slate-100 pt-3">
             <input type="hidden" name="id" value={trip.id} />
             <input
               name="title"
               required
               defaultValue={trip.title}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
             <div className="grid grid-cols-2 gap-3">
               <input
                 name="start_date"
                 type="date"
                 defaultValue={trip.start_date ?? ""}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
               />
               <input
                 name="end_date"
                 type="date"
                 defaultValue={trip.end_date ?? ""}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
               />
             </div>
             <textarea
               name="notes"
               rows={2}
               defaultValue={trip.notes ?? ""}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
             <button
               type="submit"
-              className="rounded-lg bg-slate-700 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+              className="rounded-lg bg-slate-500 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-600"
             >
               儲存
             </button>
@@ -100,7 +101,7 @@ export default async function TripPage({
         return (
           <section key={day} className="space-y-3">
             <h2 className="flex items-center gap-2 text-lg font-bold text-slate-700">
-              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 text-sm font-bold text-white">
                 {day}
               </span>
               第 {day} 天
@@ -118,7 +119,7 @@ export default async function TripPage({
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           {spot.time && (
-                            <span className="rounded bg-slate-800 px-1.5 py-0.5 text-xs font-medium text-white">
+                            <span className="rounded bg-slate-500 px-1.5 py-0.5 text-xs font-medium text-white">
                               {spot.time}
                             </span>
                           )}
@@ -127,7 +128,7 @@ export default async function TripPage({
                               {spot.category}
                             </span>
                           )}
-                          <span className="font-semibold text-slate-800">{spot.name_zh}</span>
+                          <span className="font-semibold text-slate-700">{spot.name_zh}</span>
                         </div>
                         {spot.name_kr && (
                           <p className="mt-0.5 text-sm text-slate-500">{spot.name_kr}</p>
@@ -150,21 +151,19 @@ export default async function TripPage({
                           🧭 Naver 地圖導航
                         </a>
                       </div>
-                      <form action={deleteSpot}>
-                        <input type="hidden" name="id" value={spot.id} />
-                        <input type="hidden" name="trip_id" value={trip.id} />
-                        <button
-                          type="submit"
-                          className="rounded px-2 py-1 text-xs text-slate-400 hover:bg-red-50 hover:text-red-600"
-                          title="刪除景點"
-                        >
-                          刪除
-                        </button>
-                      </form>
+                      <ConfirmSubmit
+                        action={deleteSpot}
+                        hidden={{ id: spot.id, trip_id: trip.id }}
+                        confirmText={`確定要刪除景點「${spot.name_zh}」嗎？`}
+                        className="rounded px-2 py-1 text-xs text-slate-400 hover:bg-red-50 hover:text-red-600"
+                        title="刪除景點"
+                      >
+                        刪除
+                      </ConfirmSubmit>
                     </div>
 
                     <details className="mt-2 border-t border-slate-100 pt-2">
-                      <summary className="text-xs font-medium text-slate-400 hover:text-blue-600">✎ 編輯此景點</summary>
+                      <summary className="text-xs font-medium text-slate-400 hover:text-brand-600">✎ 編輯此景點</summary>
                       <form action={updateSpot} className="mt-3 space-y-3">
                         <input type="hidden" name="id" value={spot.id} />
                         <input type="hidden" name="trip_id" value={trip.id} />
@@ -178,7 +177,7 @@ export default async function TripPage({
                               max={maxDay + 1}
                               defaultValue={spot.day_index}
                               required
-                              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
                             />
                           </div>
                           <div>
@@ -187,7 +186,7 @@ export default async function TripPage({
                               name="time"
                               defaultValue={spot.time ?? ""}
                               placeholder="例如 09:30"
-                              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
                             />
                           </div>
                         </div>
@@ -197,7 +196,7 @@ export default async function TripPage({
                             name="name_zh"
                             required
                             defaultValue={spot.name_zh}
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
                           />
                         </div>
                         <div>
@@ -206,7 +205,7 @@ export default async function TripPage({
                             name="name_kr"
                             defaultValue={spot.name_kr ?? ""}
                             placeholder="例如：경복궁"
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
                           />
                         </div>
                         <div>
@@ -215,7 +214,7 @@ export default async function TripPage({
                             name="address"
                             defaultValue={spot.address ?? ""}
                             placeholder="填地址文字，或直接貼 Naver 連結"
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
                           />
                         </div>
                         <div>
@@ -223,7 +222,7 @@ export default async function TripPage({
                           <select
                             name="category"
                             defaultValue={spot.category ?? "其他"}
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
                           >
                             {CATEGORIES.map((c) => (
                               <option key={c} value={c}>{c}</option>
@@ -236,12 +235,12 @@ export default async function TripPage({
                             name="memo"
                             rows={2}
                             defaultValue={spot.memo ?? ""}
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
                           />
                         </div>
                         <button
                           type="submit"
-                          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                          className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
                         >
                           儲存變更
                         </button>
@@ -256,7 +255,7 @@ export default async function TripPage({
       })}
 
       <details className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm" open={spots.length === 0}>
-        <summary className="flex items-center gap-2 font-semibold text-blue-600">
+        <summary className="flex items-center gap-2 font-semibold text-brand-600">
           <span className="text-xl leading-none">＋</span> 新增景點
         </summary>
         <form action={addSpot} className="mt-4 space-y-3">
@@ -271,7 +270,7 @@ export default async function TripPage({
                 max={maxDay + 1}
                 defaultValue={maxDay}
                 required
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
               />
               <p className="mt-1 text-xs text-slate-400">填 {maxDay + 1} 可新增一天</p>
             </div>
@@ -280,7 +279,7 @@ export default async function TripPage({
               <input
                 name="time"
                 placeholder="例如 09:30"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
               />
             </div>
           </div>
@@ -290,7 +289,7 @@ export default async function TripPage({
               name="name_zh"
               required
               placeholder="例如：景福宮"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
           </div>
           <div>
@@ -298,7 +297,7 @@ export default async function TripPage({
             <input
               name="name_kr"
               placeholder="例如：경복궁（填韓文 Naver 導航最準）"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
           </div>
           <div>
@@ -306,7 +305,7 @@ export default async function TripPage({
             <input
               name="address"
               placeholder="填地址文字，或直接貼 Naver 連結（如 https://naver.me/xxxx）"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
             <p className="mt-1 text-xs text-slate-400">貼上 Naver 連結時，導航按鈕會直接開啟該連結（定位最準）</p>
           </div>
@@ -315,7 +314,7 @@ export default async function TripPage({
             <select
               name="category"
               defaultValue="景點"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -328,12 +327,12 @@ export default async function TripPage({
               name="memo"
               rows={2}
               placeholder="開放時間、票價、注意事項…"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
           </div>
           <button
             type="submit"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
           >
             加入景點
           </button>

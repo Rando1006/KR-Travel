@@ -1,4 +1,5 @@
 import { getTrips, getChecklist, type ChecklistItem } from "@/lib/queries";
+import { ConfirmSubmit } from "../components/ConfirmSubmit";
 import {
   addChecklistItem,
   toggleChecklistItem,
@@ -49,7 +50,7 @@ export default async function PreparePage({
         <select
           name="trip"
           defaultValue={scopeValue}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
         >
           <option value="">通用清單</option>
           {trips.map((t) => (
@@ -58,7 +59,7 @@ export default async function PreparePage({
         </select>
         <button
           type="submit"
-          className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+          className="rounded-lg bg-slate-500 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-600"
         >
           切換
         </button>
@@ -91,7 +92,7 @@ export default async function PreparePage({
             <input type="hidden" name="trip_id" value={scopeValue} />
             <button
               type="submit"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
             >
               載入韓國旅遊預設清單
             </button>
@@ -122,16 +123,15 @@ export default async function PreparePage({
                     <span className={`flex-1 text-sm ${item.checked ? "text-slate-400 line-through" : "text-slate-700"}`}>
                       {item.text}
                     </span>
-                    <form action={deleteChecklistItem}>
-                      <input type="hidden" name="id" value={item.id} />
-                      <button
-                        type="submit"
-                        className="rounded px-2 py-1 text-xs text-slate-300 hover:bg-red-50 hover:text-red-600"
-                        title="刪除"
-                      >
-                        ✕
-                      </button>
-                    </form>
+                    <ConfirmSubmit
+                      action={deleteChecklistItem}
+                      hidden={{ id: item.id }}
+                      confirmText={`確定要刪除「${item.text}」嗎？`}
+                      className="rounded px-2 py-1 text-xs text-slate-300 hover:bg-red-50 hover:text-red-600"
+                      title="刪除"
+                    >
+                      ✕
+                    </ConfirmSubmit>
                   </li>
                 ))}
               </ul>
@@ -142,7 +142,7 @@ export default async function PreparePage({
 
       {/* 新增項目 */}
       <details className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <summary className="flex items-center gap-2 font-semibold text-blue-600">
+        <summary className="flex items-center gap-2 font-semibold text-brand-600">
           <span className="text-xl leading-none">＋</span> 新增準備項目
         </summary>
         <form action={addChecklistItem} className="mt-4 flex flex-wrap items-end gap-3">
@@ -152,7 +152,7 @@ export default async function PreparePage({
             <select
               name="category"
               defaultValue="其他"
-              className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -165,12 +165,12 @@ export default async function PreparePage({
               name="text"
               required
               placeholder="例如：相機電池"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
           </div>
           <button
             type="submit"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
           >
             新增
           </button>

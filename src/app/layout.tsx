@@ -3,14 +3,14 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "韓國旅遊規劃",
+  title: "瓜峰韓國旅遊",
   description: "規劃韓國旅遊行程、景點 Naver 地圖導航與行前準備清單",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#2563eb",
+  themeColor: "#646cb0",
 };
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className="min-h-screen">
         <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
           <nav className="mx-auto flex max-w-3xl items-center gap-1 px-4 py-3">
-            <span className="mr-2 text-lg font-bold text-blue-600">🇰🇷 韓國旅遊</span>
+            <span className="mr-2 text-lg font-bold text-brand-600">瓜峰韓國旅遊</span>
             <Link
               href="/"
               className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
