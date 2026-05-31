@@ -51,6 +51,30 @@ export async function addSpot(formData: FormData) {
   revalidatePath(`/trip/${tripId}`);
 }
 
+export async function updateSpot(formData: FormData) {
+  await ensureSchema();
+  const sql = getSql();
+  const id = Number(formData.get("id"));
+  const tripId = Number(formData.get("trip_id"));
+  if (!id) return;
+  const nameZh = str(formData, "name_zh");
+  if (!nameZh) return;
+  const dayIndex = Math.max(1, Number(formData.get("day_index")) || 1);
+  const time = str(formData, "time") || null;
+  const nameKr = str(formData, "name_kr") || null;
+  const address = str(formData, "address") || null;
+  const category = str(formData, "category") || null;
+  const memo = str(formData, "memo") || null;
+
+  await sql`
+    update spots
+    set day_index = ${dayIndex}, time = ${time}, name_zh = ${nameZh},
+        name_kr = ${nameKr}, address = ${address}, category = ${category}, memo = ${memo}
+    where id = ${id}
+  `;
+  revalidatePath(`/trip/${tripId}`);
+}
+
 export async function deleteSpot(formData: FormData) {
   await ensureSchema();
   const sql = getSql();

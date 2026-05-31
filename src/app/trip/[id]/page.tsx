@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getTrip, getSpots, type Spot } from "@/lib/queries";
 import { spotNaverUrl, isLink } from "@/lib/naver";
 import { formatDateRange } from "@/lib/date";
-import { updateTrip, addSpot, deleteSpot } from "./actions";
+import { updateTrip, addSpot, updateSpot, deleteSpot } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -162,6 +162,91 @@ export default async function TripPage({
                         </button>
                       </form>
                     </div>
+
+                    <details className="mt-2 border-t border-slate-100 pt-2">
+                      <summary className="text-xs font-medium text-slate-400 hover:text-blue-600">✎ 編輯此景點</summary>
+                      <form action={updateSpot} className="mt-3 space-y-3">
+                        <input type="hidden" name="id" value={spot.id} />
+                        <input type="hidden" name="trip_id" value={trip.id} />
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="mb-1 block text-xs font-medium text-slate-600">第幾天 *</label>
+                            <input
+                              name="day_index"
+                              type="number"
+                              min={1}
+                              max={maxDay + 1}
+                              defaultValue={spot.day_index}
+                              required
+                              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="mb-1 block text-xs font-medium text-slate-600">時間</label>
+                            <input
+                              name="time"
+                              defaultValue={spot.time ?? ""}
+                              placeholder="例如 09:30"
+                              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs font-medium text-slate-600">景點名稱（中文）*</label>
+                          <input
+                            name="name_zh"
+                            required
+                            defaultValue={spot.name_zh}
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs font-medium text-slate-600">景點名稱（韓文）</label>
+                          <input
+                            name="name_kr"
+                            defaultValue={spot.name_kr ?? ""}
+                            placeholder="例如：경복궁"
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs font-medium text-slate-600">地址 / Naver 地圖連結</label>
+                          <input
+                            name="address"
+                            defaultValue={spot.address ?? ""}
+                            placeholder="填地址文字，或直接貼 Naver 連結"
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs font-medium text-slate-600">分類</label>
+                          <select
+                            name="category"
+                            defaultValue={spot.category ?? "其他"}
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                          >
+                            {CATEGORIES.map((c) => (
+                              <option key={c} value={c}>{c}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs font-medium text-slate-600">備註</label>
+                          <textarea
+                            name="memo"
+                            rows={2}
+                            defaultValue={spot.memo ?? ""}
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                        >
+                          儲存變更
+                        </button>
+                      </form>
+                    </details>
                   </li>
                 ))}
               </ul>
