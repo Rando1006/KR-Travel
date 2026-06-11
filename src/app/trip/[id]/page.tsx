@@ -96,9 +96,105 @@ export default async function TripPage({
         </details>
       </div>
 
+      <details
+        id="add-spot"
+        className="scroll-mt-28 rounded-xl border border-brand-200 bg-white p-4 shadow-sm"
+        open={spots.length === 0}
+      >
+        <summary className="flex items-center gap-2 font-semibold text-brand-600">
+          <span className="text-xl leading-none">＋</span> 新增景點
+        </summary>
+        <form action={addSpot} className="mt-4 space-y-3">
+          <input type="hidden" name="trip_id" value={trip.id} />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-600">第幾天 *</label>
+              <input
+                name="day_index"
+                type="number"
+                min={1}
+                max={maxDay + 1}
+                defaultValue={maxDay}
+                required
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
+              />
+              <p className="mt-1 text-xs text-slate-400">填 {maxDay + 1} 可新增一天</p>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-600">時間</label>
+              <input
+                name="time"
+                placeholder="例如 09:30"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">景點名稱（中文）*</label>
+            <input
+              name="name_zh"
+              required
+              placeholder="例如：景福宮"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">景點名稱（韓文）</label>
+            <input
+              name="name_kr"
+              placeholder="例如：경복궁（填韓文 Naver 導航最準）"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">地址 / Naver 地圖連結</label>
+            <input
+              name="address"
+              placeholder="填地址文字，或直接貼 Naver 連結（如 https://naver.me/xxxx）"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
+            />
+            <p className="mt-1 text-xs text-slate-400">貼上 Naver 連結時，導航按鈕會直接開啟該連結（定位最準）</p>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">分類</label>
+            <select
+              name="category"
+              defaultValue="景點"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
+            >
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">備註</label>
+            <textarea
+              name="memo"
+              rows={2}
+              placeholder="開放時間、票價、注意事項…"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
+            />
+          </div>
+          <button
+            type="submit"
+            className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
+          >
+            加入景點
+          </button>
+        </form>
+      </details>
+
       {/* 天數快速跳轉列（固定在上方，點選即跳到該天） */}
-      {days.length > 1 && (
+      {(days.length > 1 || spots.length > 0) && (
         <nav className="sticky top-[56px] z-[5] -mx-4 flex gap-2 overflow-x-auto border-y border-slate-200 bg-white/90 px-4 py-2 backdrop-blur">
+          <a
+            href="#add-spot"
+            className="flex shrink-0 items-center gap-1.5 rounded-full bg-brand-500 px-3 py-1 text-sm font-semibold text-white hover:bg-brand-600"
+          >
+            <span className="text-base leading-none">＋</span>
+            新增景點
+          </a>
           {days.map((day) => (
             <a
               key={day}
@@ -275,90 +371,6 @@ export default async function TripPage({
         );
       })}
 
-      <details className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm" open={spots.length === 0}>
-        <summary className="flex items-center gap-2 font-semibold text-brand-600">
-          <span className="text-xl leading-none">＋</span> 新增景點
-        </summary>
-        <form action={addSpot} className="mt-4 space-y-3">
-          <input type="hidden" name="trip_id" value={trip.id} />
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-slate-600">第幾天 *</label>
-              <input
-                name="day_index"
-                type="number"
-                min={1}
-                max={maxDay + 1}
-                defaultValue={maxDay}
-                required
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
-              />
-              <p className="mt-1 text-xs text-slate-400">填 {maxDay + 1} 可新增一天</p>
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-slate-600">時間</label>
-              <input
-                name="time"
-                placeholder="例如 09:30"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-600">景點名稱（中文）*</label>
-            <input
-              name="name_zh"
-              required
-              placeholder="例如：景福宮"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-600">景點名稱（韓文）</label>
-            <input
-              name="name_kr"
-              placeholder="例如：경복궁（填韓文 Naver 導航最準）"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-600">地址 / Naver 地圖連結</label>
-            <input
-              name="address"
-              placeholder="填地址文字，或直接貼 Naver 連結（如 https://naver.me/xxxx）"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
-            />
-            <p className="mt-1 text-xs text-slate-400">貼上 Naver 連結時，導航按鈕會直接開啟該連結（定位最準）</p>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-600">分類</label>
-            <select
-              name="category"
-              defaultValue="景點"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
-            >
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-600">備註</label>
-            <textarea
-              name="memo"
-              rows={2}
-              placeholder="開放時間、票價、注意事項…"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-400"
-            />
-          </div>
-          <button
-            type="submit"
-            className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
-          >
-            加入景點
-          </button>
-        </form>
-      </details>
     </div>
   );
 }
